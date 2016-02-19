@@ -1,55 +1,54 @@
 'use strict'
 
-var assert = require('assert')
+const assert = require('chai').assert
+const seneca = require('seneca')()
 
-var Operators = require('./operators')
-var ArithmeticGame = require('./arithmetic-game.js')
+seneca
+  .use('./arithmetic-game.js')
 
-function numberPickerFake (first, second) {
-  var index = 0
-  return {
-    pick: function () {
-      if (index === 0) {
-        index += 1
-        return first
-      } else {
-        return second
-      }
-    }
-  }
-}
+const OperatorTypes = require('./lib/operator-types.js')
+const ArithmeticGame = require('./lib/arithmetic-game.js')
 
-function operatorPickerFake (operator) {
-  return {
-    pick: function () {
-      return operator
-    }
-  }
-}
+describe('arithmetic game', function () {
+  describe('creation of random game', function () {
+    const args = {}
+    let game
 
-describe('arithmetic game model', function () {
-  describe('#createRandom', function () {
-    var game
-    before(function () {
-      game = ArithmeticGame.createRandom({
-        numberPicker: numberPickerFake(5, 3),
-        operatorPicker: operatorPickerFake(Operators.ADD)
-      })
+    before(function (beforeDone) {
+      seneca
+        .add('role:arithmetic-game, internal_cmd:pick-operands', function (args, done) {
+          done(null, {
+            firstOperand: 5,
+            secondOperand: 3
+          })
+        })
+        .add('role:arithmetic-game, internal_cmd:pick-operator', function (args, done) {
+          done(null, {
+            operator: OperatorTypes.ADD
+          })
+        })
+
+      seneca
+        .act('role:arithmetic-game, cmd:create', args, function (err, result) {
+          if (err) throw err
+          game = result
+          beforeDone()
+        })
     })
 
-    it('should contain firstOperand', function () {
+    it('game should have firstOperand', function () {
       assert.equal(game.firstOperand, 5)
     })
 
-    it('should contain secondOperand', function () {
+    it('game should have secondOperand', function () {
       assert.equal(game.secondOperand, 3)
     })
 
-    it('should contain operator', function () {
-      assert.equal(game.operator, Operators.ADD)
+    it('game should have operator', function () {
+      assert.equal(game.operator, OperatorTypes.ADD)
     })
 
-    it('should contain the result', function () {
+    it('game should have result', function () {
       assert.equal(game.result, 8)
     })
   })

@@ -1,46 +1,69 @@
 'use strict'
 
-var Operators = require('./operators')
-var numberPicker = require('./number-picker')
-var operatorPicker = require('./operator-picker')
+const Promises = require('bluebird')
 
-var OPERAND_ACTIONS = {
-  [Operators.ADD]: function (first, second) {
+const ArithmeticGame = require('./lib/arithmetic-game.js')
+const OperatorTypes = require('./lib/operator-types.js')
+
+const OPERATOR_ACTIONS = {
+  [OperatorTypes.ADD]: function (first, second) {
     return first + second
   },
 
-  [Operators.SUB]: function (first, second) {
+  [OperatorTypes.SUB]: function (first, second) {
     return first - second
   },
 
-  [Operators.MULT]: function (first, second) {
+  [OperatorTypes.MULT]: function (first, second) {
     return first * second
   },
 
-  [Operators.DIV]: function (first, second) {
+  [OperatorTypes.DIV]: function (first, second) {
     return first / second
   }
 }
 
-var ArithmeticGame = {
-  createRandom: function (args) {
-    return Object.create(ArithmeticGame).init(args)
-  },
+module.exports = function arithmetic_game (options) {
 
-  init: function (args) {
-    var numberPicker = args.numberPicker || numberPicker
-    var operatorPicker = args.operatorPicker || operatorPicker
+  const seneca = this
+  const act = Promises.promisify(seneca.act, {
+    context: seneca
+  })
 
-    this.firstOperand = numberPicker.pick(0, 100)
-    this.secondOperand = numberPicker.pick(0, 100)
+  seneca.add('role:arithmetic-game, cmd:create', function (args, done) {
+    Promises.all([
+        act('role:arithmetic-game, internal_cmd:pick-operands'),
+				act('role:arithmetic-game, internal_cmd:pick-operator')
+			])
+			.then(results => {
+				const firstOperand = results[0].firstOperand
+        const secondOperand = results[0].secondOperand
+				const operator = results[1].operator
+        console.log('###', firstOperand, secondOperand, operator)
+        let game
 
-    this.operator = operatorPicker.pick()
+        if (OperatorTypes.DIV === operator) {
+          let newFirstOperand = OPERATOR_ACTIONS[OperatorTypes.MULT](firstOperand, secondOperand)
+          game = ArithmeticGame.create({
+            firstOperand: newFirstOperand,
+            secondOperand: secondOperand,
+            operator: operator,
+            result: firstOperand
+          })
+        } else {
+          const result = OPERATOR_ACTIONS[operator](firstOperand, secondOperand)
+          game = ArithmeticGame.create({
+            firstOperand: firstOperand,
+            secondOperand: secondOperand,
+            operator: operator,
+            result: result
+          })
+        }
 
-    this.result = OPERAND_ACTIONS[this.operator](this.firstOperand, this.secondOperand)
-
-    return this
-  },
-
+        return done(null, game)
+			})
+			.catch(err => {
+        return done(err)
+			})
+  })
 }
-
-module.exports = ArithmeticGame

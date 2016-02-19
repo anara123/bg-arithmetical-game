@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha -c --reporter spec ./src/**/*.test.js",
+    "test": "find ./src -name '*.test.js' | xargs node_modules/.bin/mocha -c -R spec",
     "test:dev": "npm run test -- -watch"
   },
   "keywords": [],
@@ -13,5 +13,8 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "bluebird": "^3.3.1"
   }
 }
