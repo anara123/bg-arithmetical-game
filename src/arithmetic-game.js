@@ -14,7 +14,6 @@ module.exports = function arithmetic_game (options) {
   })
 
   seneca.add('role:arithmetic-game, cmd:create', function (args, done) {
-    console.log('1######');
     Promises.all([
         act('role:operand-picker, cmd:pick'),
 				act('role:operator-picker, cmd:pick')
