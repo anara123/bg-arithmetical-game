@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/srv/arithmetic-game-srv.js --seneca.log=type:act",
-    "start:dev": "nodemon ./src/srv/arithmetic-game-srv.js", 
+    "start:dev": "nodemon ./src/srv/arithmetic-game-srv.js",
     "test": "node_modules/.bin/mocha -c -R spec --recursive ./src",
     "test:dev": "npm run test -- -watch"
   },
@@ -17,6 +17,7 @@
     "mocha": "^2.4.5"
   },
   "dependencies": {
-    "bluebird": "^3.3.1"
+    "bluebird": "^3.3.1",
+    "seneca": "^1.2.0"
   }
 }
