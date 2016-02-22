@@ -1,7 +1,7 @@
 'use strict'
 
 const APP_PORT = process.env.APP_PORT || 8080
-const SRV_HOST = process.env.SRV_HOST || '127.0.0.1'
+const SRV_HOST = process.env.SRV_HOST || '0.0.0.0'
 
 const seneca = require('seneca')()
 
