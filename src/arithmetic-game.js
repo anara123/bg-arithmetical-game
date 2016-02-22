@@ -4,24 +4,7 @@ const Promises = require('bluebird')
 
 const ArithmeticGame = require('./lib/arithmetic-game.js')
 const OperatorTypes = require('./lib/operator-types.js')
-
-const OPERATOR_ACTIONS = {
-  [OperatorTypes.ADD]: function (first, second) {
-    return first + second
-  },
-
-  [OperatorTypes.SUB]: function (first, second) {
-    return first - second
-  },
-
-  [OperatorTypes.MULT]: function (first, second) {
-    return first * second
-  },
-
-  [OperatorTypes.DIV]: function (first, second) {
-    return first / second
-  }
-}
+const OPERATOR_ACTIONS = require('./lib/operation-handler.js')
 
 module.exports = function arithmetic_game (options) {
 
@@ -31,15 +14,16 @@ module.exports = function arithmetic_game (options) {
   })
 
   seneca.add('role:arithmetic-game, cmd:create', function (args, done) {
+    console.log('1######');
     Promises.all([
-        act('role:arithmetic-game, internal_cmd:pick-operands'),
-				act('role:arithmetic-game, internal_cmd:pick-operator')
+        act('role:operand-picker, cmd:pick'),
+				act('role:operator-picker, cmd:pick')
 			])
 			.then(results => {
 				const firstOperand = results[0].firstOperand
         const secondOperand = results[0].secondOperand
 				const operator = results[1].operator
-        console.log('###', firstOperand, secondOperand, operator)
+
         let game
 
         if (OperatorTypes.DIV === operator) {

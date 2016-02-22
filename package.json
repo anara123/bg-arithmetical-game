@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node ./src/srv/arithmetic-game-srv.js --seneca.log=type:act",
+    "start:dev": "nodemon ./src/srv/arithmetic-game-srv.js", 
     "test": "find ./src -name '*.test.js' | xargs node_modules/.bin/mocha -c -R spec",
     "test:dev": "npm run test -- -watch"
   },

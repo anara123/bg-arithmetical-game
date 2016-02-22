@@ -16,8 +16,8 @@ describe('role:operand-picker', function () {
 
       for (var i = 0; i <= 100; i += 1) {
         seneca.act('role:operand-picker, cmd:pick', args, function (testIndex, err, operands) {
-          assert.isTrue(operands.firstOperand > 1 && operands.firstOperand < 100)
-          assert.isTrue(operands.secondOperand > 1 && operands.secondOperand < 100)
+          assert.isTrue(operands.firstOperand >= 1 && operands.firstOperand <= 100, 'firstOperand is invalid ' + operands.firstOperand)
+          assert.isTrue(operands.secondOperand >= 1 && operands.secondOperand <= 100, 'secondOperand is invalid ' + operands.secondOperand)
           
           if (testIndex === 100) {
             testDone()

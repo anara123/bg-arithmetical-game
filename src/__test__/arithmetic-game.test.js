@@ -4,10 +4,10 @@ const assert = require('chai').assert
 const seneca = require('seneca')()
 
 seneca
-  .use('./arithmetic-game.js')
+  .use('../arithmetic-game.js')
 
-const OperatorTypes = require('./lib/operator-types.js')
-const ArithmeticGame = require('./lib/arithmetic-game.js')
+const OperatorTypes = require('../lib/operator-types.js')
+const ArithmeticGame = require('../lib/arithmetic-game.js')
 
 describe('arithmetic game', function () {
   describe('creation of random game', function () {
@@ -16,13 +16,13 @@ describe('arithmetic game', function () {
 
     before(function (beforeDone) {
       seneca
-        .add('role:arithmetic-game, internal_cmd:pick-operands', function (args, done) {
+        .add('role:operand-picker, cmd:pick', function (args, done) {
           done(null, {
             firstOperand: 5,
             secondOperand: 3
           })
         })
-        .add('role:arithmetic-game, internal_cmd:pick-operator', function (args, done) {
+        .add('role:operator-picker, cmd:pick', function (args, done) {
           done(null, {
             operator: OperatorTypes.ADD
           })
