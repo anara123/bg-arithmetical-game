@@ -13,11 +13,17 @@ seneca
 
 if (process.env.NODE_ENV !== 'test') {
 	seneca
-		.listen({
-	    pin:  'role:arithmetic-game, cmd:*',
-	    port: APP_PORT,
-	    host: SRV_HOST
-	  })	
+		// .listen({
+	 //    pin:  'role:arithmetic-game, cmd:*',
+	 //    port: APP_PORT,
+	 //    host: SRV_HOST
+	 //  })
+	 	.use('seneca-amqp-transport')
+	  .listen({
+	    type: 'amqp',
+	    url: 'amqp://guest@guest:rabbit1:5672/seneca?locale=es_AR',
+	    pin: 'role:arithmetic-game'
+	  })
 }
 
 module.exports = seneca
